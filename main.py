@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from typing import Annotated,List
-from langgraph.graph import stateGraph,START,END
+from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langchain.chat_models import init_chat_model
 from typing_extensions import TypedDict
@@ -10,11 +10,11 @@ from pydantic import BaseModel,Field
 load_dotenv()
 
 # initialize the chat model
-llm =init_chat_model("gpt-4o")
+llm = init_chat_model("gpt-4o")
 
-# inital state definitionx
+# initial state definition
 class State(TypedDict):
-    messages:Annotated[List, add_messages]
+    messages: Annotated[List, add_messages]
     user_question: str | None
     google_result: str | None
     bing_result: str | None
@@ -30,42 +30,55 @@ class State(TypedDict):
 
 # different operations in the graph
 def google_search(state: State):
-    return
+    user_question = state.get("user_question")
+    print(f"Searching Google for: {user_question}")
+    google_results= []
+
+    return {"google_result": google_results}
 
 
 def bing_search(state: State):
-    return
+    user_question = state.get("user_question")
+    print(f"Searching Bing for: {user_question}")
+    bing_results= []
+
+    return {"bing_result": bing_results}
 
 
 def reddit_search(state: State):
-    return
+    user_question = state.get("user_question")
+    print(f"Searching Reddit for: {user_question}")
+    reddit_results= []
+
+    return {"reddit_result": reddit_results}
 
 
 def analyze_reddit_posts(state: State):
-    return
+    return {"selected_reddit_urls": []}
 
 
-def retrieve_reddit_post(state: State):
-    return
+def retrieve_reddit_posts(state: State):
+    return {"reddit_post_data": []}
 
 
 def analyze_google_results(state: State):
-    return
+    return {"google_analysis": ""}
 
 
 def analyze_bing_results(state: State):
-    return
+    return {"bing_analysis": ""}
 
 
 def analyze_reddit_results(state: State):
-    return
+    return {"reddit_analysis": ""}
 
 
-def sythesize_analyses(state: State):
-    return
+def synthesize_analyses(state: State):
+    return {"final_answer": ""}
 
 # we create the graph
-graph_builder = stateGraph(State)
+graph_builder = StateGraph(State)
+ 
 
 # adding nodes to the graph
 graph_builder.add_node("google_search",google_search)
@@ -74,8 +87,9 @@ graph_builder.add_node("reddit_search",reddit_search)
 graph_builder.add_node("analyze_reddit_posts",analyze_reddit_posts)
 graph_builder.add_node("analyze_google_results",analyze_google_results)
 graph_builder.add_node("analyze_bing_results",analyze_bing_results)
+graph_builder.add_node("retrieve_reddit_posts", retrieve_reddit_posts)
 graph_builder.add_node("analyze_reddit_results",analyze_reddit_results)
-graph_builder.add_node("sythesize_analyses",sythesize_analyses)
+graph_builder.add_node("synthesize_analyses",synthesize_analyses)
 
 
 # adding edges to the graph
